@@ -1,0 +1,978 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>부산 AI·DX 지원사업 문의 포털</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      --blue: #1E40AF;
+      --blue-dark: #1E3A8A;
+      --sky: #0EA5E9;
+      --sky-soft: #E0F2FE;
+      --surface: #F8FAFC;
+      --title: #020617;
+      --text: #334155;
+      --muted: #64748B;
+      --border: #CBD5E1;
+      --border-light: #E2E8F0;
+      --shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #fff;
+      color: var(--text);
+      font-family: Pretendard, "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .page {
+      width: min(100%, 1024px);
+      margin: 0 auto;
+      padding: 40px 24px 56px;
+    }
+
+    .header {
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .agency-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 10px;
+      border-radius: var(--radius);
+      background: var(--sky-soft);
+      color: #075985;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 14px 0 8px;
+      color: var(--title);
+      font-size: clamp(24px, 4vw, 30px);
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .form-card {
+      margin-top: 28px;
+      padding: 20px;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    h2 {
+      margin: 0;
+      color: var(--title);
+      font-size: 18px;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    .temporary-note,
+    .count,
+    .status {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .temporary-note {
+      flex: 0 0 auto;
+      margin-top: 1px;
+      font-weight: 700;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .field {
+      display: flex;
+      min-width: 0;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field-full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      color: #0F172A;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      transition: border-color 150ms ease, box-shadow 150ms ease;
+    }
+
+    input,
+    select {
+      height: 44px;
+      padding: 0 12px;
+    }
+
+    textarea {
+      min-height: 132px;
+      padding: 11px 12px;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.13);
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+
+    .form-status {
+      min-height: 22px;
+      margin: 10px 0 0;
+      color: #B91C1C;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: right;
+      word-break: keep-all;
+    }
+
+    .button {
+      min-height: 40px;
+      padding: 9px 14px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.35;
+      transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease;
+      white-space: nowrap;
+    }
+
+    .button-primary {
+      border: 1px solid var(--blue);
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .button-primary:hover {
+      border-color: var(--blue-dark);
+      background: var(--blue-dark);
+    }
+
+    .button-outline {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: #334155;
+    }
+
+    .button-outline:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .button-dark {
+      border: 1px solid #020617;
+      background: #020617;
+      color: #fff;
+    }
+
+    .button-dark:hover {
+      border-color: var(--blue);
+      background: var(--blue);
+    }
+
+    .button-delete {
+      min-height: 36px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--muted);
+    }
+
+    .button-delete:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .list-section {
+      margin-top: 16px;
+    }
+
+    .list-toolbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+
+    .list-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .count {
+      margin-top: 2px;
+    }
+
+    .filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 14px;
+    }
+
+    .filter-chip {
+      min-height: 36px;
+      padding: 7px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 800;
+      transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease;
+      white-space: nowrap;
+    }
+
+    .filter-chip:hover,
+    .filter-chip:focus-visible {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .filter-chip.is-active {
+      border-color: var(--blue-dark);
+      background: var(--blue-dark);
+      color: #fff;
+    }
+
+    .empty-state {
+      padding: 24px 16px;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--muted);
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .status {
+      min-height: 22px;
+      margin: 0 0 12px;
+      text-align: right;
+      word-break: keep-all;
+    }
+
+    .file-input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      clip-path: inset(50%);
+    }
+
+    .inquiry-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .inquiry-card {
+      padding: 16px;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius);
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .card-info {
+      min-width: 0;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .category-badge {
+      display: inline-flex;
+      align-items: center;
+      max-width: 100%;
+      min-height: 26px;
+      padding: 3px 9px;
+      border-radius: var(--radius);
+      background: var(--sky-soft);
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .relative-time {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .inquiry-title {
+      margin: 0;
+      color: #0F172A;
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .author {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .content {
+      margin: 14px 0 0;
+      color: var(--text);
+      line-height: 1.75;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding: 28px 16px 44px;
+      }
+
+      .section-heading,
+      .list-toolbar,
+      .card-top {
+        flex-direction: column;
+      }
+
+      .temporary-note {
+        flex-basis: auto;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .list-actions {
+        justify-content: flex-start;
+        width: 100%;
+      }
+
+      .button {
+        white-space: normal;
+      }
+
+      .status {
+        text-align: left;
+      }
+
+      .form-status {
+        text-align: left;
+      }
+
+      .button-delete {
+        align-self: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="header">
+      <span class="agency-badge">부산정보산업진흥원</span>
+      <h1>부산 AI·DX 지원사업 문의 포털</h1>
+      <p class="lead">지역기업·시민 누구나 부산정보산업진흥원의 지원사업에 문의할 수 있는 창구입니다.</p>
+    </header>
+
+    <section class="form-card" aria-labelledby="form-title">
+      <div class="section-heading">
+        <h2 id="form-title">문의 작성</h2>
+        <span class="temporary-note">브라우저 저장</span>
+      </div>
+
+      <form id="inquiry-form" novalidate>
+        <div class="form-grid">
+          <div class="field">
+            <label for="category">카테고리</label>
+            <select id="category" name="category" required></select>
+          </div>
+          <div class="field">
+            <label for="author">이름</label>
+            <input id="author" name="author" type="text" placeholder="예: 김부산" required>
+          </div>
+          <div class="field field-full">
+            <label for="title">제목</label>
+            <input id="title" name="title" type="text" placeholder="문의 제목을 입력하세요" required>
+          </div>
+          <div class="field field-full">
+            <label for="content">내용</label>
+            <textarea id="content" name="content" placeholder="지원사업 문의 내용을 입력하세요" required></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="button button-primary" type="submit">등록하기</button>
+        </div>
+        <p class="form-status" id="form-status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section class="list-section" aria-labelledby="list-title">
+      <div class="list-toolbar">
+        <div>
+          <h2 id="list-title">문의 목록</h2>
+          <div class="count" id="inquiry-count">총 0건</div>
+        </div>
+        <div class="list-actions">
+          <button class="button button-outline" id="import-button" type="button">엑셀 가져오기</button>
+          <button class="button button-dark" id="export-button" type="button">엑셀 내보내기</button>
+          <input class="file-input" id="excel-file" type="file" accept=".xlsx,.xls,.csv">
+        </div>
+      </div>
+      <div class="filter-chips" id="category-filters" aria-label="카테고리 필터"></div>
+      <p class="status" id="excel-status" aria-live="polite"></p>
+      <div class="inquiry-list" id="inquiry-list"></div>
+    </section>
+  </main>
+
+  <script>
+    const storageKey = "bipa-portal:inquiries";
+    const allCategoryLabel = "전체";
+    const categories = [
+      "AI·DX",
+      "바우처",
+      "교육",
+      "창업",
+      "게임·콘텐츠",
+      "해외진출",
+      "기타"
+    ];
+    const filterCategories = [allCategoryLabel, ...categories];
+    const categoryAliases = {
+      "AI·DX 솔루션 도입": "AI·DX",
+      "데이터·클라우드 바우처": "바우처",
+      "교육·인재양성 신청": "교육",
+      "스타트업 입주·창업": "창업",
+      "게임·콘텐츠 제작 지원": "게임·콘텐츠"
+    };
+
+    const sampleInquiries = [
+      {
+        category: "교육",
+        title: "AI 활용 교육과정 일정 안내 부탁드립니다",
+        author: "정하윤",
+        content: "AI 활용 기초 교육과정과 실무형 교육과정의 개설 일정, 신청 방법을 안내받고 싶습니다.",
+        minutesAgo: 1
+      },
+      {
+        category: "게임·콘텐츠",
+        title: "Bu:Star 게임 제작비 신청 절차",
+        author: "박도현",
+        content: "Bu:Star 게임콘텐츠 제작 지원사업의 신청 절차와 제출 서류, 평가 기준이 궁금합니다.",
+        minutesAgo: 3
+      },
+      {
+        category: "창업",
+        title: "센텀 스타트업 입주 자격 문의",
+        author: "이서연",
+        content: "센텀 지역 창업지원 공간 입주 대상과 예비창업자 신청 가능 여부를 확인하고 싶습니다.",
+        minutesAgo: 8
+      },
+      {
+        category: "바우처",
+        title: "데이터 바우처 신청 기간이 언제인가요?",
+        author: "최민준",
+        content: "올해 데이터 바우처와 클라우드 바우처 신청 접수 기간, 선정 발표 일정을 알고 싶습니다.",
+        minutesAgo: 14
+      },
+      {
+        category: "AI·DX",
+        title: "AI 솔루션 실증 비용 지원 가능한가요?",
+        author: "김지우",
+        content: "지역 제조기업에서 AI 품질검사 솔루션을 실증하려고 합니다. PoC 비용 지원이 가능한 사업이 있는지 문의드립니다.",
+        minutesAgo: 22
+      }
+    ];
+
+    const form = document.querySelector("#inquiry-form");
+    const categorySelect = document.querySelector("#category");
+    const authorInput = document.querySelector("#author");
+    const titleInput = document.querySelector("#title");
+    const contentInput = document.querySelector("#content");
+    const filterElement = document.querySelector("#category-filters");
+    const listElement = document.querySelector("#inquiry-list");
+    const countElement = document.querySelector("#inquiry-count");
+    const importButton = document.querySelector("#import-button");
+    const exportButton = document.querySelector("#export-button");
+    const fileInput = document.querySelector("#excel-file");
+    const formStatusElement = document.querySelector("#form-status");
+    const statusElement = document.querySelector("#excel-status");
+
+    let selectedCategory = allCategoryLabel;
+    let inquiries = loadInquiries();
+
+    function createInitialInquiries() {
+      const now = Date.now();
+      return sampleInquiries.map((item, index) => ({
+        id: `sample-${index}-${now}`,
+        category: item.category,
+        title: item.title,
+        author: item.author,
+        content: item.content,
+        createdAt: new Date(now - item.minutesAgo * 60 * 1000)
+      }));
+    }
+
+    function loadInquiries() {
+      const storedInquiries = readStoredInquiries();
+      if (storedInquiries) {
+        return storedInquiries;
+      }
+
+      const initialInquiries = createInitialInquiries();
+      saveInquiries(initialInquiries);
+      return initialInquiries;
+    }
+
+    function readStoredInquiries() {
+      try {
+        const raw = window.localStorage.getItem(storageKey);
+        if (!raw) {
+          return null;
+        }
+
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) {
+          return null;
+        }
+
+        return parsed.map(normalizeStoredInquiry).filter(Boolean);
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function normalizeStoredInquiry(item, index) {
+      if (!item || typeof item !== "object") {
+        return null;
+      }
+
+      const category = normalizeCategory(item.category);
+      const title = String(item.title || "").trim();
+      const author = String(item.author || "").trim();
+      const content = String(item.content || "").trim();
+      const createdAt = parseImportedDate(item.createdAt) || new Date();
+
+      if (!category || !title || !author || !content) {
+        return null;
+      }
+
+      return {
+        id: String(item.id || `stored-${index}-${Date.now()}`),
+        category,
+        title,
+        author,
+        content,
+        createdAt
+      };
+    }
+
+    function saveInquiries(nextInquiries = inquiries) {
+      const serializable = nextInquiries.map((inquiry) => ({
+        ...inquiry,
+        category: normalizeCategory(inquiry.category),
+        createdAt: inquiry.createdAt instanceof Date ? inquiry.createdAt.toISOString() : new Date(inquiry.createdAt).toISOString()
+      }));
+      window.localStorage.setItem(storageKey, JSON.stringify(serializable));
+    }
+
+    function normalizeCategory(value) {
+      const category = String(value || "").trim();
+      const aliasedCategory = categoryAliases[category] || category;
+      return categories.includes(aliasedCategory) ? aliasedCategory : "기타";
+    }
+
+    function populateCategories() {
+      categories.forEach((category) => {
+        const option = document.createElement("option");
+        option.value = category;
+        option.textContent = category;
+        categorySelect.append(option);
+      });
+      categorySelect.value = categories[0];
+    }
+
+    function renderFilterChips() {
+      filterElement.replaceChildren();
+
+      filterCategories.forEach((category) => {
+        const chip = document.createElement("button");
+        chip.className = "filter-chip";
+        chip.type = "button";
+        chip.textContent = category;
+        chip.setAttribute("aria-pressed", String(category === selectedCategory));
+
+        if (category === selectedCategory) {
+          chip.classList.add("is-active");
+        }
+
+        chip.addEventListener("click", () => {
+          selectedCategory = category;
+          render();
+        });
+
+        filterElement.append(chip);
+      });
+    }
+
+    function getSortedInquiries() {
+      return [...inquiries].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    }
+
+    function getVisibleInquiries() {
+      const sortedInquiries = getSortedInquiries();
+      if (selectedCategory === allCategoryLabel) {
+        return sortedInquiries;
+      }
+      return sortedInquiries.filter((inquiry) => inquiry.category === selectedCategory);
+    }
+
+    function formatRelativeTime(date) {
+      const diff = Math.max(0, Date.now() - date.getTime());
+      const minute = 60 * 1000;
+      const hour = 60 * minute;
+      const day = 24 * hour;
+
+      if (diff < minute) {
+        return "방금";
+      }
+      if (diff < hour) {
+        return `${Math.floor(diff / minute)}분 전`;
+      }
+      if (diff < day) {
+        return `${Math.floor(diff / hour)}시간 전`;
+      }
+      return `${Math.floor(diff / day)}일 전`;
+    }
+
+    function render() {
+      renderFilterChips();
+
+      const visibleInquiries = getVisibleInquiries();
+      countElement.textContent = selectedCategory === allCategoryLabel
+        ? `총 ${visibleInquiries.length}건`
+        : `${selectedCategory} ${visibleInquiries.length}건 / 전체 ${inquiries.length}건`;
+      listElement.replaceChildren();
+
+      if (visibleInquiries.length === 0) {
+        const emptyState = document.createElement("div");
+        emptyState.className = "empty-state";
+        emptyState.textContent = "표시할 문의가 없습니다.";
+        listElement.append(emptyState);
+        return;
+      }
+
+      visibleInquiries.forEach((inquiry) => {
+        const card = document.createElement("article");
+        card.className = "inquiry-card";
+
+        const cardTop = document.createElement("div");
+        cardTop.className = "card-top";
+
+        const cardInfo = document.createElement("div");
+        cardInfo.className = "card-info";
+
+        const metaRow = document.createElement("div");
+        metaRow.className = "meta-row";
+
+        const categoryBadge = document.createElement("span");
+        categoryBadge.className = "category-badge";
+        categoryBadge.textContent = inquiry.category;
+
+        const relativeTime = document.createElement("span");
+        relativeTime.className = "relative-time";
+        relativeTime.textContent = formatRelativeTime(inquiry.createdAt);
+
+        const title = document.createElement("h3");
+        title.className = "inquiry-title";
+        title.textContent = inquiry.title;
+
+        const author = document.createElement("div");
+        author.className = "author";
+        author.textContent = `작성자 ${inquiry.author}`;
+
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "button button-delete";
+        deleteButton.type = "button";
+        deleteButton.textContent = "삭제";
+        deleteButton.addEventListener("click", () => {
+          if (!window.confirm("이 문의를 정말 삭제하시겠습니까?")) {
+            return;
+          }
+          inquiries = inquiries.filter((item) => item.id !== inquiry.id);
+          saveInquiries();
+          render();
+        });
+
+        const content = document.createElement("p");
+        content.className = "content";
+        content.textContent = inquiry.content;
+
+        metaRow.append(categoryBadge, relativeTime);
+        cardInfo.append(metaRow, title, author);
+        cardTop.append(cardInfo, deleteButton);
+        card.append(cardTop, content);
+        listElement.append(card);
+      });
+    }
+
+    function trimFormValue(element) {
+      return element.value.trim();
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const category = trimFormValue(categorySelect);
+      const author = trimFormValue(authorInput);
+      const title = trimFormValue(titleInput);
+      const content = trimFormValue(contentInput);
+
+      if (!category || !author || !title || !content) {
+        formStatusElement.textContent = "모든 항목을 입력해주세요";
+        return;
+      }
+
+      inquiries.unshift({
+        id: `manual-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        category: normalizeCategory(category),
+        author,
+        title,
+        content,
+        createdAt: new Date()
+      });
+
+      form.reset();
+      categorySelect.value = categories[0];
+      formStatusElement.textContent = "";
+      statusElement.textContent = "";
+      saveInquiries();
+      render();
+    });
+
+    importButton.addEventListener("click", () => {
+      fileInput.value = "";
+      fileInput.click();
+    });
+
+    fileInput.addEventListener("change", async (event) => {
+      const file = event.target.files[0];
+      if (!file) {
+        return;
+      }
+
+      try {
+        const imported = await readInquiryFile(file);
+        if (imported.length === 0) {
+          statusElement.textContent = "가져올 수 있는 문의 데이터가 없습니다. 카테고리, 제목, 작성자, 내용 열을 확인해 주세요.";
+          return;
+        }
+
+        inquiries = [...imported, ...inquiries];
+        statusElement.textContent = `${imported.length}건을 엑셀에서 가져왔습니다.`;
+        saveInquiries();
+        render();
+      } catch (error) {
+        statusElement.textContent = "엑셀 파일을 읽는 중 문제가 발생했습니다.";
+      }
+    });
+
+    async function readInquiryFile(file) {
+      if (!window.XLSX) {
+        throw new Error("XLSX library is not available.");
+      }
+
+      const buffer = await file.arrayBuffer();
+      const workbook = XLSX.read(buffer, { type: "array", cellDates: true });
+      const sheetName = workbook.SheetNames[0];
+      if (!sheetName) {
+        return [];
+      }
+
+      const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
+        defval: "",
+        raw: false
+      });
+
+      const importedAt = new Date();
+      return rows.map((row, index) => normalizeImportedRow(row, importedAt, index)).filter(Boolean);
+    }
+
+    function normalizeImportedRow(row, importedAt, index) {
+      const category = getColumnValue(row, ["카테고리", "category"]);
+      const title = getColumnValue(row, ["제목", "title"]);
+      const author = getColumnValue(row, ["작성자", "이름", "author", "name"]);
+      const content = getColumnValue(row, ["내용", "content"]);
+      const rawCreatedAt = getColumnValue(row, ["작성일", "createdAt", "created_at"]);
+
+      if (!category || !title || !author || !content) {
+        return null;
+      }
+
+      return {
+        id: `import-${Date.now()}-${index}-${Math.random().toString(16).slice(2)}`,
+        category: normalizeCategory(category),
+        title,
+        author,
+        content,
+        createdAt: parseImportedDate(rawCreatedAt) || importedAt
+      };
+    }
+
+    function getColumnValue(row, names) {
+      const entries = Object.entries(row);
+      const match = entries.find(([key]) => names.some((name) => key.trim().toLowerCase() === name.toLowerCase()));
+      return match ? String(match[1]).trim() : "";
+    }
+
+    function parseImportedDate(value) {
+      if (!value) {
+        return null;
+      }
+      if (value instanceof Date && !Number.isNaN(value.getTime())) {
+        return value;
+      }
+
+      const parsed = new Date(value);
+      return Number.isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    exportButton.addEventListener("click", () => {
+      if (inquiries.length === 0) {
+        statusElement.textContent = "내보낼 문의가 없습니다.";
+        return;
+      }
+      if (!window.XLSX) {
+        statusElement.textContent = "엑셀 파일을 읽는 중 문제가 발생했습니다.";
+        return;
+      }
+
+      const sortedInquiries = getSortedInquiries();
+      const rows = sortedInquiries.map((inquiry, index) => ({
+        "번호": index + 1,
+        "카테고리": inquiry.category,
+        "제목": inquiry.title,
+        "작성자": inquiry.author,
+        "내용": inquiry.content,
+        "작성일": inquiry.createdAt
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(rows);
+      worksheet["!cols"] = [
+        { wch: 8 },
+        { wch: 22 },
+        { wch: 34 },
+        { wch: 14 },
+        { wch: 60 },
+        { wch: 22 }
+      ];
+
+      const dateColumn = "F";
+      for (let row = 2; row <= rows.length + 1; row += 1) {
+        const cell = worksheet[`${dateColumn}${row}`];
+        if (cell) {
+          cell.t = "d";
+          cell.z = "yyyy-mm-dd hh:mm";
+        }
+      }
+
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "문의목록");
+      XLSX.writeFile(workbook, `busan-dx-inquiries-${formatDateForFile(new Date())}.xlsx`);
+      statusElement.textContent = `${sortedInquiries.length}건을 엑셀 파일로 내보냈습니다.`;
+    });
+
+    function formatDateForFile(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    populateCategories();
+    render();
+    window.setInterval(render, 30000);
+  </script>
+</body>
+</html>
